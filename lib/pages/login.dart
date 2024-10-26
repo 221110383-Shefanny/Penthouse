@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/supervisor.dart/supervisor_home.dart';
 
@@ -5,8 +7,21 @@ import 'package:flutter_application_9/pages/supervisor.dart/supervisor_home.dart
 //AKUN SUPERVISOR HANYA UNTUK MANAGER
 //FITUR SIGN UP AKAN DITAMPILKAN SETELAH LOGIN AKUN SUPERVISOR
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
   const Login({super.key});
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  bool passwordVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    passwordVisible = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +40,7 @@ class Login extends StatelessWidget {
                 //     fontWeight: FontWeight.bold,
                 //   ),
                 // ),
-                
+
                 // ini test
 
                 Image.asset('assets/penthouse.png'),
@@ -48,15 +63,29 @@ class Login extends StatelessWidget {
                   height: 20,
                 ),
                 TextField(
+                  obscureText: passwordVisible,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: const Color.fromARGB(255, 235, 199, 128),
                     prefixIcon: Icon(Icons.lock),
                     labelText: "Password",
+                    suffixIcon: IconButton(
+                      icon: Icon(passwordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                          passwordVisible = !passwordVisible;
+                        });
+                      },
+                    ),
+                    alignLabelWithHint: false,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
+                  keyboardType: TextInputType.visiblePassword,
+                  textInputAction: TextInputAction.done,
                 ),
                 const SizedBox(
                   height: 70,
