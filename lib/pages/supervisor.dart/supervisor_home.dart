@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_9/pages/general_affair.dart';
 
 class HomePage extends StatelessWidget {
   final String userName;
@@ -37,11 +38,11 @@ class HomePage extends StatelessWidget {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 children: [
-                  _buildCard(Icons.map, "Room", Colors.blue[100]),
-                  _buildCard(Icons.business_center, "General Affair",
+                  _buildCard(context,Icons.map, "Room", Colors.blue[100],),
+                  _buildCard(context,Icons.business_center, "General Affair",
                       Colors.green[100]),
-                  _buildCard(Icons.inventory, "Inventory", Colors.orange[100]),
-                  _buildCard(Icons.insights, "Insight", Colors.purple[100]),
+                  _buildCard(context,Icons.inventory, "Inventory", Colors.orange[100]),
+                  _buildCard(context,Icons.insights, "Insight", Colors.purple[100]),
                   _buildEmployeeCard(),
                 ],
               ),
@@ -73,9 +74,13 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(IconData icon, String title, Color? color) {
+  Widget _buildCard(BuildContext context, IconData icon, String title, Color? color, ) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        if (title == "General Affair") {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context)=> GeneralAffair()));
+        }
+      },
       child: Card(
         color: color,
         shape: RoundedRectangleBorder(
