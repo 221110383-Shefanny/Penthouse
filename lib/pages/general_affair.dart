@@ -44,7 +44,8 @@ class _GeneralAffairState extends State<GeneralAffair> {
                     child: TextField(
                       keyboardType: TextInputType.multiline,
                       maxLines: null,
-                      maxLengthEnforcement: MaxLengthEnforcement.truncateAfterCompositionEnds,
+                      maxLengthEnforcement:
+                          MaxLengthEnforcement.truncateAfterCompositionEnds,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(500),
                       ],
@@ -53,23 +54,30 @@ class _GeneralAffairState extends State<GeneralAffair> {
                         fillColor: const Color.fromARGB(255, 235, 199, 128),
                         focusColor: const Color.fromARGB(255, 235, 199, 128),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white, width: 2.0),
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 2.0),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         border: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white, width: 2.0),
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 2.0),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white, width: 2.0),
+                          borderSide:
+                              const BorderSide(color: Colors.white, width: 2.0),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         hintText: 'Input Report',
-                        hintStyle: TextStyle(color: Colors.black,),
+                        hintStyle: TextStyle(
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(
+                    height: 20,
+                  ),
                   Container(
                     width: 400,
                     height: 200,
@@ -77,7 +85,8 @@ class _GeneralAffairState extends State<GeneralAffair> {
                       onTap: _takePhoto,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: _image == null ? Colors.red : Colors.transparent,
+                          color:
+                              _image == null ? Colors.red : Colors.transparent,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: _image == null
@@ -132,10 +141,8 @@ class _GeneralAffairState extends State<GeneralAffair> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton.icon(
-                  onPressed: () {
-                    
-                  },
-                  icon: const Icon(Icons.report),
+                  onPressed: () {},
+                  // icon: const Icon(Icons.report),
                   label: const Text('Send Report'),
                 ),
               ],
