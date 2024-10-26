@@ -1,11 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/general_affair.dart';
+<<<<<<< HEAD:lib/pages/supervisor.dart/supervisor_home.dart
+=======
+import 'package:flutter_application_9/pages/insight.dart';
+import 'package:flutter_application_9/pages/inventory.dart';
+import 'package:flutter_application_9/pages/room.dart';
+import 'package:flutter_application_9/pages/supervisor/employee.dart';
+>>>>>>> e047d0b0c55f08a7052a26eaee179bd2fe0735d2:lib/pages/supervisor/supervisor_home.dart
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final String userName;
 
   const HomePage({super.key, required this.userName});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +32,7 @@ class HomePage extends StatelessWidget {
           children: [
             Center(child: Image.asset('assets/penthouse.png', height: 200)),
             Text(
-              "Welcome back, $userName",
+              "Welcome back, ${widget.userName}",
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -38,11 +50,38 @@ class HomePage extends StatelessWidget {
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
                 children: [
+<<<<<<< HEAD:lib/pages/supervisor.dart/supervisor_home.dart
                   _buildCard(context,Icons.map, "Room", Colors.blue[100],),
                   _buildCard(context,Icons.business_center, "General Affair",
                       Colors.green[100]),
                   _buildCard(context,Icons.inventory, "Inventory", Colors.orange[100]),
                   _buildCard(context,Icons.insights, "Insight", Colors.purple[100]),
+=======
+                  _buildCard(
+                    icon: Icons.map,
+                    title: "Room",
+                    color: Colors.blue[100],
+                    page: const Room(),
+                  ),
+                  _buildCard(
+                    icon: Icons.business_center,
+                    title: "General Affair",
+                    color: Colors.green[100],
+                    page: const GeneralAffair(),
+                  ),
+                  _buildCard(
+                    icon: Icons.inventory,
+                    title: "Inventory",
+                    color: Colors.orange[100],
+                    page: const Inventory(),
+                  ),
+                  _buildCard(
+                    icon: Icons.insights,
+                    title: "Insight",
+                    color: Colors.purple[100],
+                    page: const Insight(),
+                  ),
+>>>>>>> e047d0b0c55f08a7052a26eaee179bd2fe0735d2:lib/pages/supervisor/supervisor_home.dart
                   _buildEmployeeCard(),
                 ],
               ),
@@ -74,12 +113,29 @@ class HomePage extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD:lib/pages/supervisor.dart/supervisor_home.dart
   Widget _buildCard(BuildContext context, IconData icon, String title, Color? color, ) {
     return GestureDetector(
       onTap: () {
         if (title == "General Affair") {
           Navigator.of(context).push(MaterialPageRoute(builder: (context)=> GeneralAffair()));
         }
+=======
+  Widget _buildCard({
+    required IconData icon,
+    required String title,
+    required Color? color,
+    required Widget page,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => page,
+          ),
+        );
+>>>>>>> e047d0b0c55f08a7052a26eaee179bd2fe0735d2:lib/pages/supervisor/supervisor_home.dart
       },
       child: Card(
         color: color,
@@ -104,7 +160,14 @@ class HomePage extends StatelessWidget {
 
   Widget _buildEmployeeCard() {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Employee(),
+          ),
+        );
+      },
       child: Card(
         color: Colors.lightBlue[100],
         shape: RoundedRectangleBorder(

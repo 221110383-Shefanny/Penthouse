@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+<<<<<<< HEAD
 class GeneralAffair extends StatefulWidget {
   const GeneralAffair({super.key});
 
@@ -9,11 +10,18 @@ class GeneralAffair extends StatefulWidget {
 
 class _GeneralAffairState extends State<GeneralAffair> {
   @override
+=======
+class GeneralAffair extends StatelessWidget {
+  const GeneralAffair({super.key});
+
+  @override
+>>>>>>> e047d0b0c55f08a7052a26eaee179bd2fe0735d2
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("General Affair"),
       ),
+<<<<<<< HEAD
       body: Center(
         child: Column(
           children: [
@@ -28,3 +36,8 @@ class _GeneralAffairState extends State<GeneralAffair> {
     );
   }
 }
+=======
+    );
+  }
+}
+>>>>>>> e047d0b0c55f08a7052a26eaee179bd2fe0735d2
