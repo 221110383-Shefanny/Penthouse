@@ -8,7 +8,6 @@ class CheckInPage extends StatefulWidget {
 }
 
 class _CheckInPageState extends State<CheckInPage> {
-  // Data dummy untuk check-in
   final List<Map<String, String>> checkinHistory = [
     {'nama': 'John Doe', 'checkin': '10:00','tanggal':'2024-09-24 '},
     {'nama': 'Jane Smith', 'checkin': '09:30', 'tanggal': '2024-03-12 '},
@@ -47,7 +46,6 @@ class _CheckInPageState extends State<CheckInPage> {
               icon: Icons.check_circle,
               color: Colors.green,
               onPressed: () {
-                // Aksi saat kartu ditekan, bisa ditambahkan jika perlu
               },
             ),
             const SizedBox(height: 20),
@@ -78,7 +76,6 @@ class _CheckInPageState extends State<CheckInPage> {
     );
   }
 
-  // Fungsi untuk membangun kartu insight
   Widget _buildInsightCard({
     required String title,
     required String value,
@@ -87,7 +84,7 @@ class _CheckInPageState extends State<CheckInPage> {
     required VoidCallback onPressed,
   }) {
     return GestureDetector(
-      onTap: onPressed, // Aksi saat kartu ditekan
+      onTap: onPressed,
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),

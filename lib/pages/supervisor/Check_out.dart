@@ -8,7 +8,6 @@ class CheckOutPage extends StatefulWidget {
 }
 
 class _CheckOutPageState extends State<CheckOutPage> {
-  // Data dummy untuk check-out
   final List<Map<String, String>> checkoutHistory = [
     {'nama': 'John Doe', 'checkout': '12:00'},
     {'nama': 'Jane Smith', 'checkout': '11:15'},
@@ -41,7 +40,6 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 icon: Icons.check_circle,
                 color: Colors.green,
                 onPressed: () {
-                  // Aksi saat kartu ditekan, bisa ditambahkan jika perlu
                 },
               ),
               const SizedBox(height: 20),
@@ -79,7 +77,7 @@ Widget _buildInsightCard({
   required VoidCallback onPressed,
 }) {
   return GestureDetector(
-    onTap: onPressed, // Aksi saat kartu ditekan
+    onTap: onPressed,
     child: Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),

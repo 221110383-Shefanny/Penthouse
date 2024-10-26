@@ -43,7 +43,6 @@ class InsightPage extends StatelessWidget {
     );
   }
 
-  // Fungsi untuk membuat kartu insight
   Widget _buildInsightCard({
     required String title,
     required String value,
@@ -52,7 +51,7 @@ class InsightPage extends StatelessWidget {
     required VoidCallback onPressed,
   }) {
     return GestureDetector(
-      onTap: onPressed, // Aksi saat kartu ditekan
+      onTap: onPressed,
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -73,14 +72,14 @@ class InsightPage extends StatelessWidget {
     );
   }
 
-  // Fungsi navigasi dengan animasi transisi dari atas
+
   void _navigateToPage(BuildContext context, Widget page) {
     Navigator.of(context).push(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
         pageBuilder: (context, animation, secondaryAnimation) => page,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(0.0, -1.0); // Animasi masuk dari atas
+          const begin = Offset(0.0, -1.0); 
           const end = Offset.zero;
           const curve = Curves.easeInOut;
 
