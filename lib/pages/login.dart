@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_9/pages/supervisor.dart/supervisor_home.dart';
+import 'package:flutter_application_9/pages/supervisor/supervisor_home.dart';
 
 //TIDAK ADA TOMBOL SIGN UP KARENA HANYA AKUN SUPERVISOR YANG DAPAT MENDAFTARKAN AKUN BARU
 //AKUN SUPERVISOR HANYA UNTUK MANAGER
