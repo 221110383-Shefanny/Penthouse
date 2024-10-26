@@ -9,9 +9,9 @@ class CheckOutPage extends StatefulWidget {
 
 class _CheckOutPageState extends State<CheckOutPage> {
   final List<Map<String, String>> checkoutHistory = [
-    {'nama': 'John Doe', 'checkout': '12:00'},
-    {'nama': 'Jane Smith', 'checkout': '11:15'},
-    {'nama': 'Michael Johnson', 'checkout': '11:50'},
+    {'nama': 'anto', 'checkout': '12:00'},
+    {'nama': 'suria', 'checkout': '11:15'},
+    {'nama': 'budi', 'checkout': '11:50'},
   ];
 
   @override
@@ -39,8 +39,7 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 value: "${checkoutHistory.length}",
                 icon: Icons.check_circle,
                 color: Colors.green,
-                onPressed: () {
-                },
+                onPressed: () {},
               ),
               const SizedBox(height: 20),
               const Text(

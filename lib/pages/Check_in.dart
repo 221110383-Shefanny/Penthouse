@@ -9,9 +9,9 @@ class CheckInPage extends StatefulWidget {
 
 class _CheckInPageState extends State<CheckInPage> {
   final List<Map<String, String>> checkinHistory = [
-    {'nama': 'John Doe', 'checkin': '10:00','tanggal':'2024-09-24 '},
-    {'nama': 'Jane Smith', 'checkin': '09:30', 'tanggal': '2024-03-12 '},
-    {'nama': 'Michael Johnson', 'checkin': '08:45', 'tanggal': '2024-01-09 '},
+    {'nama': 'anto', 'checkin': '10:00','tanggal':'2024-09-24 '},
+    {'nama': 'suria', 'checkin': '09:30', 'tanggal': '2024-03-12 '},
+    {'nama': 'budi', 'checkin': '08:45', 'tanggal': '2024-01-09 '},
   ];
   DateTime? selectedDate;
   @override
