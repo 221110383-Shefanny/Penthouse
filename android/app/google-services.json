@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "993592041829",
+    "project_id": "blast-project-penthouse-c9ea6",
+    "storage_bucket": "blast-project-penthouse-c9ea6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993592041829:android:682c246cf18193b3e3818c",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_9"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_poQFEk8UgVfi8Na-nNTMFQXP2DB3WOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
