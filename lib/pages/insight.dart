@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/Check_in.dart';
 import 'package:flutter_application_9/pages/Check_out.dart';
+import 'package:flutter_application_9/pages/general_affairhistory.dart';
 
 class InsightPage extends StatelessWidget {
   const InsightPage({super.key});
@@ -35,6 +36,16 @@ class InsightPage extends StatelessWidget {
               color: Colors.redAccent,
               onPressed: () {
                 _navigateToPage(context, const CheckOutPage());
+              },
+            ),
+            const SizedBox(height: 20),
+            _buildInsightCard(
+              title: "General Affair",
+              value: "10",
+              icon: Icons.cleaning_services,
+              color: Colors.blueAccent,
+              onPressed: () {
+                _navigateToPage(context, const GeneralAffairhistory());
               },
             ),
           ],
