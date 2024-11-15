@@ -34,7 +34,7 @@ class _LoginState extends State<Login> {
     try {
       // Cek apakah email dan password cocok dengan data di Firestore
       var userSnapshot = await FirebaseFirestore.instance
-          .collection('employees') // Koleksi pengguna Firestore
+          .collection('employees')
           .where('email', isEqualTo: _emailController.text.trim())
           .get();
 
@@ -64,6 +64,14 @@ class _LoginState extends State<Login> {
           ),
         );
       }
+
+// Event untuk menandai pengguna aktif
+      await _analytics.logEvent(
+        name: 'active_user',
+        parameters: {
+          'email': _emailController.text.trim(),
+        },
+      );
 
       // Log aktivitas login ke Firebase Analytics
       await _analytics.logEvent(
@@ -168,7 +176,7 @@ class _LoginState extends State<Login> {
                       vertical: 10,
                     ),
                   ),
-                  onPressed: isLoading ? null : _signIn,
+                  onPressed: () => _signIn(),
                   child: isLoading
                       ? const CircularProgressIndicator()
                       : const Text(
