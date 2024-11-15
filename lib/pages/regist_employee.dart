@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_9/employee_list.dart';
+import 'package:flutter_application_9/pages/login.dart';
 
 class RegistEmployee extends StatefulWidget {
   const RegistEmployee({super.key});
@@ -12,30 +13,49 @@ class RegistEmployee extends StatefulWidget {
 class _RegistEmployeeState extends State<RegistEmployee> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController positionController = TextEditingController();
-  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   IconData selectedIcon = Icons.account_circle;
 
   Future<void> _addEmployee() async {
-    if (nameController.text.isNotEmpty && positionController.text.isNotEmpty) {
-      final newEmployee = {
-        'name': nameController.text,
-        'position': positionController.text,
-        'username': usernameController.text,
-        'password': passwordController.text,
-        'icon': selectedIcon.codePoint, // Menyimpan icon sebagai kode poin
-      };
-
-      // Menyimpan data ke Firestore
+    if (nameController.text.isNotEmpty &&
+        positionController.text.isNotEmpty &&
+        emailController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty) {
       try {
+        // Daftarkan pengguna ke Firebase Authentication
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+                email: emailController.text, password: passwordController.text);
+
+        // Ambil UID pengguna yang baru terdaftar
+        String uid = userCredential.user!.uid;
+
+        // Menyimpan data ke Firestore
+        final newEmployee = {
+          'name': nameController.text,
+          'position': positionController.text,
+          'email': emailController.text,
+          'password': passwordController
+              .text, // Biasanya tidak disarankan untuk menyimpan password
+          'icon': selectedIcon.codePoint,
+          'uid': uid, // Simpan UID pengguna
+        };
+
         await FirebaseFirestore.instance
             .collection('employees')
-            .add(newEmployee);
-        Navigator.of(context).pop(); // Menutup form setelah berhasil
+            .doc(uid) // Gunakan UID untuk membuat dokumen unik per pengguna
+            .set(newEmployee);
+
+        // Setelah data berhasil disimpan, pindah ke halaman login
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Login()),
+        );
       } catch (e) {
         // Menangani error jika ada
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Error adding employee: $e")));
+            .showSnackBar(SnackBar(content: Text("Error: $e")));
       }
     }
   }
@@ -59,16 +79,18 @@ class _RegistEmployeeState extends State<RegistEmployee> {
               decoration: InputDecoration(labelText: "Position"),
             ),
             TextField(
-              decoration: InputDecoration(labelText: "Username"),
+              controller: emailController,
+              decoration: InputDecoration(labelText: "Email"),
+              keyboardType: TextInputType.emailAddress,
             ),
             TextField(
+              controller: passwordController,
               decoration: InputDecoration(labelText: "Password"),
+              obscureText: true,
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                _addEmployee();
-              },
+              onPressed: _addEmployee,
               child: Text("Add Employee"),
             ),
           ],

@@ -1,11 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/supervisor/supervisor_home.dart';
-
-//TIDAK ADA TOMBOL SIGN UP KARENA HANYA AKUN SUPERVISOR YANG DAPAT MENDAFTARKAN AKUN BARU
-//AKUN SUPERVISOR HANYA UNTUK MANAGER
-//FITUR SIGN UP AKAN DITAMPILKAN SETELAH LOGIN AKUN SUPERVISOR
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -16,7 +11,8 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool passwordVisible = false;
-  final TextEditingController _usernameController = TextEditingController();
+  bool isLoading = false; // Variabel untuk indikator loading
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -27,27 +23,42 @@ class _LoginState extends State<Login> {
   }
 
   Future<void> _signIn() async {
+    setState(() {
+      isLoading = true; // Tampilkan loading saat proses login dimulai
+    });
+
     try {
-      await _auth.signInWithEmailAndPassword(
-        email: _usernameController.text.trim(),
+      // Pastikan menggunakan email dan password untuk login
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => HomePage(userName: "Supervisor")));
+
+      // Jika login berhasil, arahkan pengguna ke halaman Home
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(userName: "Supervisor"),
+        ),
+      );
     } catch (e) {
+      setState(() {
+        isLoading =
+            false; // Menyembunyikan indikator loading setelah gagal login
+      });
       showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: const Text("Login Gagal"),
-                content: Text(e.toString()),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text("OK"))
-                ],
-              ));
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Login Gagal"),
+          content: Text("Akun tidak ditemukan atau password salah.\n$e"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -61,36 +72,23 @@ class _LoginState extends State<Login> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // const Text(
-                //   "Penthouse",
-                //   style: TextStyle(
-                //     fontSize: 40,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
-
-                // ini test
-
                 Image.asset('assets/penthouse.png'),
-
-                const SizedBox(
-                  height: 50,
-                ),
+                const SizedBox(height: 50),
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: const Color.fromARGB(255, 235, 199, 128),
-                    prefixIcon: Icon(Icons.person),
-                    labelText: "Username",
+                    prefixIcon: Icon(Icons.email),
+                    labelText: "Email",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
                 TextField(
+                  controller: _passwordController,
                   obscureText: passwordVisible,
                   decoration: InputDecoration(
                     filled: true,
@@ -107,38 +105,33 @@ class _LoginState extends State<Login> {
                         });
                       },
                     ),
-                    alignLabelWithHint: false,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
-                  keyboardType: TextInputType.visiblePassword,
-                  textInputAction: TextInputAction.done,
                 ),
-                const SizedBox(
-                  height: 70,
-                ),
+                const SizedBox(height: 70),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 235, 199, 128),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 45, vertical: 10)),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HomePage(userName: "Michael"),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    "Login",
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 77, 77, 77),
-                      fontSize: 18,
+                    backgroundColor: const Color.fromARGB(255, 235, 199, 128),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 45,
+                      vertical: 10,
                     ),
                   ),
-                )
+                  onPressed: isLoading
+                      ? null
+                      : _signIn, // Disable button while loading
+                  child: isLoading
+                      ? const CircularProgressIndicator() // Tampilkan loading saat proses login
+                      : const Text(
+                          "Login",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 77, 77, 77),
+                            fontSize: 18,
+                          ),
+                        ),
+                ),
               ],
             ),
           ),
