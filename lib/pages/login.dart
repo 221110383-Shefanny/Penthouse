@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/supervisor/supervisor_home.dart';
 
@@ -14,11 +16,39 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   bool passwordVisible = false;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
     passwordVisible = true;
+  }
+
+  Future<void> _signIn() async {
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: _usernameController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomePage(userName: "Supervisor")));
+    } catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: const Text("Login Gagal"),
+                content: Text(e.toString()),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("OK"))
+                ],
+              ));
+    }
   }
 
   @override

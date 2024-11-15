@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/employee_list.dart';
 
@@ -16,22 +17,26 @@ class _RegistEmployeeState extends State<RegistEmployee> {
   IconData selectedIcon = Icons.account_circle;
 
   Future<void> _addEmployee() async {
-    await Future.delayed(Duration(seconds: 1));
-
     if (nameController.text.isNotEmpty && positionController.text.isNotEmpty) {
-      final newEmployee = Employee(
-        name: nameController.text,
-        position: positionController.text,
-        username: usernameController.text,
-        password: passwordController.text,
-        icon: selectedIcon,
-      );
+      final newEmployee = {
+        'name': nameController.text,
+        'position': positionController.text,
+        'username': usernameController.text,
+        'password': passwordController.text,
+        'icon': selectedIcon.codePoint, // Menyimpan icon sebagai kode poin
+      };
 
-      setState(() {
-        employees.add(newEmployee);
-      });
-
-      Navigator.of(context).pop();
+      // Menyimpan data ke Firestore
+      try {
+        await FirebaseFirestore.instance
+            .collection('employees')
+            .add(newEmployee);
+        Navigator.of(context).pop(); // Menutup form setelah berhasil
+      } catch (e) {
+        // Menangani error jika ada
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Error adding employee: $e")));
+      }
     }
   }
 
