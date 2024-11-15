@@ -39,12 +39,19 @@ class _EmployeeState extends State<Employee> {
             return const Center(child: Text('No employees found.'));
           }
 
+          // Debugging: print the raw data to the console
+          debugPrint('Employees Data: ${snapshot.data!.docs}');
+
           final employees = snapshot.data!.docs;
 
           return ListView.builder(
             itemCount: employees.length,
             itemBuilder: (context, index) {
               final employeeData = employees[index];
+
+              // Debugging: print individual employee data
+              debugPrint('Employee $index: ${employeeData.data()}');
+
               return ListTile(
                 leading: Icon(
                   IconData(
