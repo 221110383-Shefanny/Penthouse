@@ -32,8 +32,9 @@ class _LoginState extends State<Login> {
     });
 
     try {
+      // Cek apakah email dan password cocok dengan data di Firestore
       var userSnapshot = await FirebaseFirestore.instance
-          .collection('users')
+          .collection('employees') // Koleksi pengguna Firestore
           .where('email', isEqualTo: _emailController.text.trim())
           .get();
 
@@ -41,16 +42,20 @@ class _LoginState extends State<Login> {
         throw Exception('Akun tidak ditemukan');
       }
 
-      String storedPassword = userSnapshot.docs.first['password'];
+      // Verifikasi password
+      String storedPassword = userSnapshot
+          .docs.first['password']; // Asumsi password disimpan di Firestore
       if (_passwordController.text.trim() != storedPassword) {
         throw Exception('Password salah');
       }
 
+      // Proses login dengan Firebase Authentication
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
+      // Navigasi ke halaman home jika login berhasil
       if (mounted) {
         Navigator.pushReplacement(
           context,
@@ -60,6 +65,7 @@ class _LoginState extends State<Login> {
         );
       }
 
+      // Log aktivitas login ke Firebase Analytics
       await _analytics.logEvent(
         name: 'login_event',
         parameters: {
@@ -67,12 +73,14 @@ class _LoginState extends State<Login> {
         },
       );
 
+      // Simpan aktivitas login ke Firestore
       await FirebaseFirestore.instance.collection('logs').add({
         'email': _emailController.text.trim(),
         'status': 'login',
         'timestamp': FieldValue.serverTimestamp(),
       });
 
+      // Simpan aktivitas login ke Firebase Realtime Database
       DatabaseReference ref = FirebaseDatabase.instance.ref("logs");
       await ref.push().set({
         'email': _emailController.text.trim(),
@@ -86,6 +94,7 @@ class _LoginState extends State<Login> {
         });
       }
 
+      // Menampilkan error jika login gagal
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
