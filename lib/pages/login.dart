@@ -1,4 +1,7 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/supervisor/supervisor_home.dart';
 
@@ -10,8 +13,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
   bool passwordVisible = false;
-  bool isLoading = false; // Variabel untuk indikator loading
+  bool isLoading = false;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -24,28 +28,64 @@ class _LoginState extends State<Login> {
 
   Future<void> _signIn() async {
     setState(() {
-      isLoading = true; // Tampilkan loading saat proses login dimulai
+      isLoading = true;
     });
 
     try {
-      // Pastikan menggunakan email dan password untuk login
+      var userSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('email', isEqualTo: _emailController.text.trim())
+          .get();
+
+      if (userSnapshot.docs.isEmpty) {
+        throw Exception('Akun tidak ditemukan');
+      }
+
+      String storedPassword = userSnapshot.docs.first['password'];
+      if (_passwordController.text.trim() != storedPassword) {
+        throw Exception('Password salah');
+      }
+
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      // Jika login berhasil, arahkan pengguna ke halaman Home
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => HomePage(userName: "Supervisor"),
-        ),
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(userName: "Supervisor"),
+          ),
+        );
+      }
+
+      await _analytics.logEvent(
+        name: 'login_event',
+        parameters: {
+          'email': _emailController.text.trim(),
+        },
       );
-    } catch (e) {
-      setState(() {
-        isLoading =
-            false; // Menyembunyikan indikator loading setelah gagal login
+
+      await FirebaseFirestore.instance.collection('logs').add({
+        'email': _emailController.text.trim(),
+        'status': 'login',
+        'timestamp': FieldValue.serverTimestamp(),
       });
+
+      DatabaseReference ref = FirebaseDatabase.instance.ref("logs");
+      await ref.push().set({
+        'email': _emailController.text.trim(),
+        'status': 'login',
+        'timestamp': ServerValue.timestamp,
+      });
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -119,11 +159,9 @@ class _LoginState extends State<Login> {
                       vertical: 10,
                     ),
                   ),
-                  onPressed: isLoading
-                      ? null
-                      : _signIn, // Disable button while loading
+                  onPressed: isLoading ? null : _signIn,
                   child: isLoading
-                      ? const CircularProgressIndicator() // Tampilkan loading saat proses login
+                      ? const CircularProgressIndicator()
                       : const Text(
                           "Login",
                           style: TextStyle(
