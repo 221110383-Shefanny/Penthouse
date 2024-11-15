@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/supervisor/supervisor_home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -32,7 +33,7 @@ class _LoginState extends State<Login> {
     });
 
     try {
-      // Cek apakah email dan password cocok dengan data di Firestore
+      // Cek apakah email cocok dengan data di Firestore
       var userSnapshot = await FirebaseFirestore.instance
           .collection('employees')
           .where('email', isEqualTo: _emailController.text.trim())
@@ -42,65 +43,56 @@ class _LoginState extends State<Login> {
         throw Exception('Akun tidak ditemukan');
       }
 
-      // Verifikasi password
-      String storedPassword = userSnapshot
-          .docs.first['password']; // Asumsi password disimpan di Firestore
+      // Ambil data pengguna dari Firestore
+      var userData = userSnapshot.docs.first.data();
+      String storedPassword = userData['password']; // Password di Firestore
+      String name = userData['name']; // Ambil name dari Firestore
+      String position = userData['position']; // Ambil position dari Firestore
+
       if (_passwordController.text.trim() != storedPassword) {
         throw Exception('Password salah');
       }
 
       // Proses login dengan Firebase Authentication
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+      await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+
+      // // Simpan data ke SharedPreferences
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      // // await prefs.setString('userName', name);
+      // // await prefs.setString('userRole', position);
+      // await prefs.setBool('isLoggedIn', true);
 
       // Navigasi ke halaman home jika login berhasil
       if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(userName: "Supervisor"),
+            builder: (context) => HomePage(userName: name, role: position),
           ),
         );
       }
 
-// Event untuk menandai pengguna aktif
-      await _analytics.logEvent(
-        name: 'active_user',
-        parameters: {
-          'email': _emailController.text.trim(),
-        },
-      );
-
-      // Log aktivitas login ke Firebase Analytics
+      // Log aktivitas login ke Firebase Analytics dan Firestore
       await _analytics.logEvent(
         name: 'login_event',
         parameters: {
           'email': _emailController.text.trim(),
+          'name': name,
         },
       );
-
-      // Simpan aktivitas login ke Firestore
       await FirebaseFirestore.instance.collection('logs').add({
         'email': _emailController.text.trim(),
+        'username': name,
         'status': 'login',
         'timestamp': FieldValue.serverTimestamp(),
       });
-
-      // Simpan aktivitas login ke Firebase Realtime Database
-      DatabaseReference ref = FirebaseDatabase.instance.ref("logs");
-      await ref.push().set({
-        'email': _emailController.text.trim(),
-        'status': 'login',
-        'timestamp': ServerValue.timestamp,
-      });
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+      setState(() {
+        isLoading = false;
+      });
 
       // Menampilkan error jika login gagal
       showDialog(
