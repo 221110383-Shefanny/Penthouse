@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_9/pages/general_affair.dart';
 import 'package:flutter_application_9/pages/insight.dart';
 import 'package:flutter_application_9/pages/inventory.dart';
@@ -8,40 +7,14 @@ import 'package:flutter_application_9/pages/supervisor/employee.dart';
 
 class HomePage extends StatefulWidget {
   final String userName;
-  final String role;
+  final String userRole; // Menambahkan parameter role
 
-  const HomePage({super.key, required this.userName, required this.role});
-
+  const HomePage({super.key, required this.userName, required this.userRole});
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  late SharedPreferences _preferences;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadPreferences();
-  }
-
-  Future<void> _loadPreferences() async {
-    _preferences = await SharedPreferences.getInstance();
-    // Jika data ada di SharedPreferences, gunakan itu
-    setState(() {
-      _userName = _preferences.getString('userName') ?? widget.userName;
-      _role = _preferences.getString('role') ?? widget.role;
-    });
-  }
-
-  Future<void> _savePreferences() async {
-    await _preferences.setString('userName', _userName);
-    await _preferences.setString('role', _role);
-  }
-
-  late String _userName = widget.userName;
-  late String _role = widget.role;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,7 +29,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Center(child: Image.asset('assets/penthouse.png', height: 200)),
             Text(
-              "Welcome back, $_userName",
+              "Welcome back, ${widget.userName}", // Menampilkan nama pengguna
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -64,7 +37,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Text(
-              "You Logged In as '$_role'",
+              "You Logged In as ${widget.userRole}", // Menampilkan posisi pengguna
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 25),

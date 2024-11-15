@@ -49,29 +49,28 @@ class _LoginState extends State<Login> {
         throw Exception('Password salah');
       }
 
+      // Ambil nama dan posisi pengguna dari Firestore
+      String userName = userSnapshot.docs.first['name'];
+      String userRole = userSnapshot.docs.first['position'];
+
       // Proses login dengan Firebase Authentication
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      // Navigasi ke halaman home jika login berhasil
+      // Navigasi ke halaman home dengan data pengguna
       if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => HomePage(userName: "Supervisor"),
+            builder: (context) => HomePage(
+              userName: userName, // Mengirim nama pengguna
+              userRole: userRole, // Mengirim posisi pengguna
+            ),
           ),
         );
       }
-
-// Event untuk menandai pengguna aktif
-      await _analytics.logEvent(
-        name: 'active_user',
-        parameters: {
-          'email': _emailController.text.trim(),
-        },
-      );
 
       // Log aktivitas login ke Firebase Analytics
       await _analytics.logEvent(
