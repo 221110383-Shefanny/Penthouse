@@ -23,37 +23,31 @@ class _RegistEmployeeState extends State<RegistEmployee> {
         emailController.text.isNotEmpty &&
         passwordController.text.isNotEmpty) {
       try {
-        // Daftarkan pengguna ke Firebase Authentication
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
                 email: emailController.text, password: passwordController.text);
 
-        // Ambil UID pengguna yang baru terdaftar
         String uid = userCredential.user!.uid;
 
-        // Menyimpan data ke Firestore
         final newEmployee = {
           'name': nameController.text,
           'position': positionController.text,
           'email': emailController.text,
-          'password': passwordController
-              .text, // Biasanya tidak disarankan untuk menyimpan password
+          'password': passwordController.text,
           'icon': selectedIcon.codePoint,
-          'uid': uid, // Simpan UID pengguna
+          'uid': uid,
         };
 
         await FirebaseFirestore.instance
             .collection('employees')
-            .doc(uid) // Gunakan UID untuk membuat dokumen unik per pengguna
+            .doc(uid)
             .set(newEmployee);
 
-        // Setelah data berhasil disimpan, pindah ke halaman login
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => Login()),
         );
       } catch (e) {
-        // Menangani error jika ada
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("Error: $e")));
       }

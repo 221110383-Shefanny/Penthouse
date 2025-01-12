@@ -32,7 +32,6 @@ class _LoginState extends State<Login> {
     });
 
     try {
-      // Cek apakah email dan password cocok dengan data di Firestore
       var userSnapshot = await FirebaseFirestore.instance
           .collection('employees')
           .where('email', isEqualTo: _emailController.text.trim())
@@ -42,37 +41,31 @@ class _LoginState extends State<Login> {
         throw Exception('Akun tidak ditemukan');
       }
 
-      // Verifikasi password
-      String storedPassword = userSnapshot
-          .docs.first['password']; // Asumsi password disimpan di Firestore
+      String storedPassword = userSnapshot.docs.first['password'];
       if (_passwordController.text.trim() != storedPassword) {
         throw Exception('Password salah');
       }
 
-      // Ambil nama dan posisi pengguna dari Firestore
       String userName = userSnapshot.docs.first['name'];
       String userRole = userSnapshot.docs.first['position'];
 
-      // Proses login dengan Firebase Authentication
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      // Navigasi ke halaman home dengan data pengguna
       if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(
-              userName: userName, // Mengirim nama pengguna
-              userRole: userRole, // Mengirim posisi pengguna
+              userName: userName,
+              userRole: userRole,
             ),
           ),
         );
       }
 
-      // Log aktivitas login ke Firebase Analytics
       await _analytics.logEvent(
         name: 'login_event',
         parameters: {
@@ -80,14 +73,12 @@ class _LoginState extends State<Login> {
         },
       );
 
-      // Simpan aktivitas login ke Firestore
       await FirebaseFirestore.instance.collection('logs').add({
         'email': _emailController.text.trim(),
         'status': 'login',
         'timestamp': FieldValue.serverTimestamp(),
       });
 
-      // Simpan aktivitas login ke Firebase Realtime Database
       DatabaseReference ref = FirebaseDatabase.instance.ref("logs");
       await ref.push().set({
         'email': _emailController.text.trim(),
@@ -101,7 +92,6 @@ class _LoginState extends State<Login> {
         });
       }
 
-      // Menampilkan error jika login gagal
       showDialog(
         context: context,
         builder: (context) => AlertDialog(

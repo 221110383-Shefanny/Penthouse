@@ -7,7 +7,7 @@ import 'package:flutter_application_9/pages/supervisor/employee.dart';
 
 class HomePage extends StatefulWidget {
   final String userName;
-  final String userRole; // Menambahkan parameter role
+  final String userRole;
 
   const HomePage({super.key, required this.userName, required this.userRole});
   @override
@@ -22,14 +22,14 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Penthouse"),
       ),
       body: Container(
-        color: Colors.grey[100], // Ubah warna background
+        color: Colors.grey[100],
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(child: Image.asset('assets/penthouse.png', height: 200)),
             Text(
-              "Welcome back, ${widget.userName}", // Menampilkan nama pengguna
+              "Welcome back, ${widget.userName}",
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Text(
-              "You Logged In as ${widget.userRole}", // Menampilkan posisi pengguna
+              "You Logged In as ${widget.userRole}",
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 25),

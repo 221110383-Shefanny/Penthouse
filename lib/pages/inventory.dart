@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_9/pages/Sqllite.dart';
+// import 'Sqlitte.dart'; // Ganti dengan lokasi file yang benar
 
 class Inventory extends StatefulWidget {
   const Inventory({super.key});
@@ -8,16 +10,22 @@ class Inventory extends StatefulWidget {
 }
 
 class _InventoryState extends State<Inventory> {
-  // Daftar barang dummy
-  final List<Map<String, dynamic>> inventoryItems = [
-    {'name': 'Laptop', 'quantity': 10},
-    {'name': 'Meja', 'quantity': 5},
-    {'name': 'Kursi', 'quantity': 20},
-    {'name': 'Proyektor', 'quantity': 3},
-    {'name': 'Printer', 'quantity': 4},
-  ];
+  final datalite _dbHelper = datalite();
+  List<Map<String, dynamic>> inventoryItems = [];
 
-  // Fungsi untuk menambah barang
+  @override
+  void initState() {
+    super.initState();
+    _loadItems();
+  }
+
+  void _loadItems() async {
+    final items = await _dbHelper.getInventory();
+    setState(() {
+      inventoryItems = items;
+    });
+  }
+
   void _addItem() {
     showDialog(
       context: context,
@@ -49,11 +57,13 @@ class _InventoryState extends State<Inventory> {
             TextButton(
               onPressed: () {
                 if (itemName.isNotEmpty) {
-                  setState(() {
-                    inventoryItems
-                        .add({'name': itemName, 'quantity': itemQuantity});
+                  _dbHelper.insertItem({
+                    'name': itemName,
+                    'quantity': itemQuantity,
+                  }).then((_) {
+                    _loadItems();
+                    Navigator.of(context).pop();
                   });
-                  Navigator.of(context).pop();
                 }
               },
               child: const Text('Simpan'),
