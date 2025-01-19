@@ -31,6 +31,24 @@ class HomePage extends StatefulWidget {
     required this.dateJoined,
   }) : super(key: key);
 
+  String formatDate(String date) {
+    try {
+      DateTime dateTime = DateTime.parse(date);
+      final DateFormat formatter = DateFormat('dd MMMM yyyy');
+      return formatter.format(dateTime);
+    } catch (e) {
+      try {
+        final DateFormat customFormat = DateFormat('yyyy-MM-dd');
+        DateTime dateTime = customFormat.parse(date);
+        final DateFormat formatter = DateFormat('dd MMMM yyyy');
+        return formatter.format(dateTime);
+      } catch (e) {
+        print("Error parsing date: $e");
+        return "Invalid Date";
+      }
+    }
+  }
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
