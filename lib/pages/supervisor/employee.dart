@@ -39,36 +39,143 @@ class _EmployeeState extends State<Employee> {
             return const Center(child: Text('No employees found.'));
           }
 
-          // Debugging: print the raw data to the console
-          debugPrint('Employees Data: ${snapshot.data!.docs}');
-
           final employees = snapshot.data!.docs;
 
           return ListView.builder(
             itemCount: employees.length,
             itemBuilder: (context, index) {
               final employeeData = employees[index];
-
-              // Debugging: print individual employee data
-              debugPrint('Employee $index: ${employeeData.data()}');
+              final docId =
+                  employeeData.id; // ID dokumen untuk operasi Edit/Remove
 
               return ListTile(
-                leading: Icon(
-                  employeeData['icon'] != null
-                      ? IconData(
-                          employeeData['icon'],
-                          fontFamily: 'MaterialIcons',
-                        )
-                      : Icons.account_circle,
+                leading: const Icon(
+                  Icons.account_circle,
                   size: 40,
                   color: Colors.blue,
                 ),
                 title: Text(employeeData['name'] ?? 'No Name'),
                 subtitle: Text(employeeData['position'] ?? 'No Position'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        // Navigasi ke halaman edit (buat halaman edit)
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditEmployee(
+                              employeeId: docId,
+                              initialData:
+                                  employeeData.data() as Map<String, dynamic>,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        // Konfirmasi penghapusan
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Delete Employee'),
+                            content: const Text(
+                                'Are you sure you want to delete this employee?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  FirebaseFirestore.instance
+                                      .collection('employees')
+                                      .doc(docId)
+                                      .delete()
+                                      .then((_) {
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              'Employee deleted successfully')),
+                                    );
+                                  });
+                                },
+                                child: const Text('Delete'),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               );
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class EditEmployee extends StatelessWidget {
+  final String employeeId;
+  final Map<String, dynamic> initialData;
+
+  const EditEmployee({
+    super.key,
+    required this.employeeId,
+    required this.initialData,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final nameController = TextEditingController(text: initialData['name']);
+    final positionController =
+        TextEditingController(text: initialData['position']);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit Employee'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Name'),
+            ),
+            TextField(
+              controller: positionController,
+              decoration: const InputDecoration(labelText: 'Position'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                FirebaseFirestore.instance
+                    .collection('employees')
+                    .doc(employeeId)
+                    .update({
+                  'name': nameController.text,
+                  'position': positionController.text,
+                }).then((_) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Employee updated successfully')),
+                  );
+                });
+              },
+              child: const Text('Save Changes'),
+            ),
+          ],
+        ),
       ),
     );
   }

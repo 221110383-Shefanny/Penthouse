@@ -32,6 +32,7 @@ class _LoginState extends State<Login> {
     });
 
     try {
+      // Cek apakah email ada di koleksi 'employees'
       var userSnapshot = await FirebaseFirestore.instance
           .collection('employees')
           .where('email', isEqualTo: _emailController.text.trim())
@@ -41,18 +42,13 @@ class _LoginState extends State<Login> {
         throw Exception('Akun tidak ditemukan');
       }
 
+      // Dapatkan password yang disimpan di Firestore dan cek dengan input user
       String storedPassword = userSnapshot.docs.first['password'];
       if (_passwordController.text.trim() != storedPassword) {
         throw Exception('Password salah');
       }
 
-      String userName = userSnapshot.docs.first['name'];
-      String userRole = userSnapshot.docs.first['position'];
-      String userEmail = userSnapshot.docs.first['email'];
-      String userIcon = userSnapshot.docs.first['icon']
-          .toString(); // Pastikan icon sudah berupa String
-      String userUid = userSnapshot.docs.first['uid'];
-
+      // Melakukan login menggunakan FirebaseAuth
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
@@ -63,16 +59,18 @@ class _LoginState extends State<Login> {
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(
-              userName: userName,
-              userRole: userRole,
-              userEmail: userEmail,
-              userIcon: userIcon, // Pass icon data
-              userUid: userUid, // Pass uid
+              userName: userSnapshot.docs.first['name'], // Passing user name
+              userRole:
+                  userSnapshot.docs.first['position'], // Passing user role
+              userEmail: _emailController.text.trim(), // Passing email
+              userIcon: 'default_icon', // Example icon, adjust accordingly
+              userUid: userSnapshot.docs.first['uid'], // Passing UID
             ),
           ),
         );
       }
 
+      // Logging events ke Firebase Analytics
       await _analytics.logEvent(
         name: 'login_event',
         parameters: {
@@ -80,12 +78,14 @@ class _LoginState extends State<Login> {
         },
       );
 
+      // Menyimpan log ke Firestore
       await FirebaseFirestore.instance.collection('logs').add({
         'email': _emailController.text.trim(),
         'status': 'login',
         'timestamp': FieldValue.serverTimestamp(),
       });
 
+      // Menyimpan log ke Firebase Realtime Database
       DatabaseReference ref = FirebaseDatabase.instance.ref("logs");
       await ref.push().set({
         'email': _emailController.text.trim(),
@@ -99,6 +99,7 @@ class _LoginState extends State<Login> {
         });
       }
 
+      // Menampilkan dialog jika login gagal
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
