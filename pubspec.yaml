@@ -37,6 +37,7 @@ dependencies:
   flutter:
     sdk: flutter
   image_picker: ^1.1.2
+  intercom_flutter: ^9.2.3
   intl: ^0.20.1
   path: ^1.9.0
   shared_preferences: ^2.3.3

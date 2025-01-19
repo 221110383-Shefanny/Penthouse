@@ -1,8 +1,8 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter_application_9/employee_list.dart';
 import 'package:flutter_application_9/pages/supervisor/supervisor_home.dart';
 
 class Login extends StatefulWidget {
@@ -26,31 +26,37 @@ class _LoginState extends State<Login> {
     passwordVisible = true;
   }
 
+  // Fungsi untuk mengambil data karyawan dari Firestore
+  Future<Employee?> fetchEmployeeData(String email) async {
+    var userSnapshot = await FirebaseFirestore.instance
+        .collection('employees')
+        .where('email', isEqualTo: email)
+        .get();
+
+    if (userSnapshot.docs.isNotEmpty) {
+      var doc = userSnapshot.docs.first;
+      return Employee.fromFirestore(doc.data(), doc.id); // Pass UID (doc.id)
+    }
+    return null;
+  }
+
   Future<void> _signIn() async {
     setState(() {
       isLoading = true;
     });
 
     try {
-      // Cek apakah email ada di koleksi 'employees'
-      var userSnapshot = await FirebaseFirestore.instance
-          .collection('employees')
-          .where('email', isEqualTo: _emailController.text.trim())
-          .get();
-
-      if (userSnapshot.docs.isEmpty) {
+      var employee = await fetchEmployeeData(_emailController.text.trim());
+      if (employee == null) {
         throw Exception('Akun tidak ditemukan');
       }
 
-      // Dapatkan password yang disimpan di Firestore dan cek dengan input user
-      String storedPassword = userSnapshot.docs.first['password'];
-      if (_passwordController.text.trim() != storedPassword) {
+      if (_passwordController.text.trim() != employee.password) {
         throw Exception('Password salah');
       }
 
-      // Melakukan login menggunakan FirebaseAuth
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
+      await _auth.signInWithEmailAndPassword(
+        email: employee.email,
         password: _passwordController.text.trim(),
       );
 
@@ -59,47 +65,30 @@ class _LoginState extends State<Login> {
           context,
           MaterialPageRoute(
             builder: (context) => HomePage(
-              userName: userSnapshot.docs.first['name'], // Passing user name
-              userRole:
-                  userSnapshot.docs.first['position'], // Passing user role
-              userEmail: _emailController.text.trim(), // Passing email
-              userIcon: 'default_icon', // Example icon, adjust accordingly
-              userUid: userSnapshot.docs.first['uid'], // Passing UID
+              userName: employee.name,
+              userRole: employee.position,
+              userEmail: employee.email,
+              userIcon: employee.icon,
+              userUid: employee.uid,
+              phoneNumber: employee.phoneNumber,
+              address: employee.address,
+              dateOfBirth: employee.dateOfBirth.toIso8601String(),
+              dateJoined: employee.dateJoined.toIso8601String(),
             ),
           ),
         );
       }
 
-      // Logging events ke Firebase Analytics
-      await _analytics.logEvent(
-        name: 'login_event',
-        parameters: {
-          'email': _emailController.text.trim(),
-        },
-      );
-
-      // Menyimpan log ke Firestore
       await FirebaseFirestore.instance.collection('logs').add({
         'email': _emailController.text.trim(),
         'status': 'login',
         'timestamp': FieldValue.serverTimestamp(),
       });
-
-      // Menyimpan log ke Firebase Realtime Database
-      DatabaseReference ref = FirebaseDatabase.instance.ref("logs");
-      await ref.push().set({
-        'email': _emailController.text.trim(),
-        'status': 'login',
-        'timestamp': ServerValue.timestamp,
-      });
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-      }
+      setState(() {
+        isLoading = false;
+      });
 
-      // Menampilkan dialog jika login gagal
       showDialog(
         context: context,
         builder: (context) => AlertDialog(

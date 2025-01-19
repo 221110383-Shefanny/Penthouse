@@ -1,20 +1,22 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; // Ini untuk mengimpor IconData
 
 class Employee {
+  final String uid; // Tambahkan UID
   final String name;
   final String position;
-  final String email; // Mengganti username menjadi email
+  final String email;
   final String password;
   final IconData icon;
-  final String phoneNumber; // Tambahkan nomor HP
-  final String address; // Tambahkan alamat
-  final DateTime dateOfBirth; // Tambahkan tanggal lahir
-  final DateTime dateJoined; // Tambahkan tanggal bergabung
+  final String phoneNumber;
+  final String address;
+  final DateTime dateOfBirth;
+  final DateTime dateJoined;
 
   Employee({
+    required this.uid, // UID wajib
     required this.name,
     required this.position,
-    required this.email, // Menggunakan email alih-alih username
+    required this.email,
     required this.password,
     required this.icon,
     required this.phoneNumber,
@@ -22,18 +24,21 @@ class Employee {
     required this.dateOfBirth,
     required this.dateJoined,
   });
-}
 
-final List<Employee> employees = [
-  Employee(
-    name: 'Budi',
-    position: 'Room Boy',
-    email: 'budihartono123@example.com',
-    password: 'akuganteng',
-    phoneNumber: '081234567890', // Input manual
-    address: 'Jalan Mawar No. 123, Jakarta', // Input manual
-    dateOfBirth: DateTime(1995, 5, 20), // Input manual
-    dateJoined: DateTime(2020, 1, 15), // Input manual
-    icon: Icons.account_circle,
-  ),
-];
+  // Factory method untuk konversi dari Firebase DocumentSnapshot
+  factory Employee.fromFirestore(Map<String, dynamic> data, String uid) {
+    return Employee(
+      uid: uid,
+      name: data['name'],
+      position: data['position'],
+      email: data['email'],
+      password: data['password'],
+      icon:
+          IconData(data['icon'], fontFamily: 'MaterialIcons'), // Konversi icon
+      phoneNumber: data['phoneNumber'],
+      address: data['address'],
+      dateOfBirth: DateTime.parse(data['dateOfBirth']), // Konversi dari string
+      dateJoined: DateTime.parse(data['dateJoined']), // Konversi dari string
+    );
+  }
+}

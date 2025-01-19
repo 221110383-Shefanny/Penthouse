@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart'; // Import intl for date formatting
 import 'package:flutter_application_9/pages/profile_page.dart'; // Import ProfilePage
 import 'package:flutter_application_9/pages/general_affair.dart';
 import 'package:flutter_application_9/pages/insight.dart';
@@ -10,8 +11,12 @@ class HomePage extends StatefulWidget {
   final String userName;
   final String userRole;
   final String userEmail;
-  final String userIcon;
+  final IconData userIcon;
   final String userUid;
+  final String phoneNumber;
+  final String address;
+  final String dateOfBirth; // Assuming this is a string date
+  final String dateJoined; // Assuming this is a string date
 
   const HomePage({
     Key? key,
@@ -20,6 +25,10 @@ class HomePage extends StatefulWidget {
     required this.userEmail,
     required this.userIcon,
     required this.userUid,
+    required this.phoneNumber,
+    required this.address,
+    required this.dateOfBirth,
+    required this.dateJoined,
   }) : super(key: key);
 
   @override
@@ -27,6 +36,32 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // Function to format the date
+  String formatDate(String date) {
+    try {
+      // Try parsing the date with DateTime.parse() (ISO format)
+      DateTime dateTime = DateTime.parse(date);
+      final DateFormat formatter = DateFormat('dd MMMM yyyy'); // Desired format
+      return formatter.format(dateTime); // Returning formatted date
+    } catch (e) {
+      // If it's not in ISO format, handle other formats using DateFormat
+      try {
+        // Use custom format (change this pattern if needed)
+        final DateFormat customFormat =
+            DateFormat('yyyy-MM-dd'); // Example pattern
+        DateTime dateTime =
+            customFormat.parse(date); // Parse custom formatted date
+        final DateFormat formatter =
+            DateFormat('dd MMMM yyyy'); // Desired format
+        return formatter.format(dateTime); // Returning formatted date
+      } catch (e) {
+        // Handle the error gracefully if the date format is not correct
+        print("Error parsing date: $e");
+        return "Invalid Date"; // Default error string
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +87,7 @@ class _HomePageState extends State<HomePage> {
               "You Logged In as ${widget.userRole}",
               style: const TextStyle(fontSize: 16),
             ),
+            const SizedBox(height: 25),
             const SizedBox(height: 25),
             Expanded(
               child: GridView.count(
@@ -84,7 +120,6 @@ class _HomePageState extends State<HomePage> {
                     page: const InsightPage(),
                   ),
                   _buildEmployeeCard(),
-                  _buildProfileCard(), // Menambahkan tombol untuk membuka ProfilePage
                 ],
               ),
             ),
@@ -112,7 +147,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         onTap: (index) {
           if (index == 2) {
-            // Navigasi ke ProfilePage saat menekan ikon profile
+            // Navigate to ProfilePage when profile icon is tapped
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -121,7 +156,10 @@ class _HomePageState extends State<HomePage> {
                   email: widget.userEmail,
                   position: widget.userRole,
                   icon: widget.userIcon,
-                  uid: widget.userUid,
+                  phoneNumber: widget.phoneNumber,
+                  address: widget.address,
+                  dateOfBirth: widget.dateOfBirth,
+                  dateJoined: widget.dateJoined,
                 ),
               ),
             );
@@ -190,44 +228,6 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 10),
             const Text(
               "Employee",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileCard() {
-    return GestureDetector(
-      onTap: () {
-        // Navigasi ke halaman ProfilePage
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfilePage(
-              name: widget.userName,
-              email: widget.userEmail,
-              position: widget.userRole,
-              icon: widget.userIcon,
-              uid: widget.userUid,
-            ),
-          ),
-        );
-      },
-      child: Card(
-        color: Colors.lightGreen[100],
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        elevation: 5,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.person, size: 50),
-            SizedBox(height: 10),
-            Text(
-              "Profile",
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
             ),
           ],
