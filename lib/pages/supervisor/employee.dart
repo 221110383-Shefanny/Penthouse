@@ -54,10 +54,12 @@ class _EmployeeState extends State<Employee> {
 
               return ListTile(
                 leading: Icon(
-                  IconData(
-                    employeeData['icon'] ?? Icons.account_circle.codePoint,
-                    fontFamily: 'MaterialIcons',
-                  ),
+                  employeeData['icon'] != null
+                      ? IconData(
+                          employeeData['icon'],
+                          fontFamily: 'MaterialIcons',
+                        )
+                      : Icons.account_circle,
                   size: 40,
                   color: Colors.blue,
                 ),
