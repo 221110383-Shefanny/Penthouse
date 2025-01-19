@@ -48,6 +48,10 @@ class _LoginState extends State<Login> {
 
       String userName = userSnapshot.docs.first['name'];
       String userRole = userSnapshot.docs.first['position'];
+      String userEmail = userSnapshot.docs.first['email'];
+      String userIcon = userSnapshot.docs.first['icon']
+          .toString(); // Pastikan icon sudah berupa String
+      String userUid = userSnapshot.docs.first['uid'];
 
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
@@ -61,6 +65,9 @@ class _LoginState extends State<Login> {
             builder: (context) => HomePage(
               userName: userName,
               userRole: userRole,
+              userEmail: userEmail,
+              userIcon: userIcon, // Pass icon data
+              userUid: userUid, // Pass uid
             ),
           ),
         );
