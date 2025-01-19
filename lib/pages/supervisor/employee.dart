@@ -136,6 +136,11 @@ class EditEmployee extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final nameController = TextEditingController(text: initialData['name']);
+    final addressController =
+        TextEditingController(text: initialData['address']);
+    final emailController = TextEditingController(text: initialData['email']);
+    final phoneNumberController =
+        TextEditingController(text: initialData['phoneNumber']);
     final positionController =
         TextEditingController(text: initialData['position']);
 
@@ -145,36 +150,74 @@ class EditEmployee extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(labelText: 'Name'),
-            ),
-            TextField(
-              controller: positionController,
-              decoration: const InputDecoration(labelText: 'Position'),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                FirebaseFirestore.instance
-                    .collection('employees')
-                    .doc(employeeId)
-                    .update({
-                  'name': nameController.text,
-                  'position': positionController.text,
-                }).then((_) {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Employee updated successfully')),
-                  );
-                });
-              },
-              child: const Text('Save Changes'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
+              ),
+              TextField(
+                controller: addressController,
+                decoration: const InputDecoration(labelText: 'Address'),
+              ),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+                keyboardType: TextInputType.emailAddress,
+              ),
+              TextField(
+                controller: phoneNumberController,
+                decoration: const InputDecoration(labelText: 'Phone Number'),
+                keyboardType: TextInputType.phone,
+              ),
+
+              TextField(
+                controller: positionController,
+                decoration: const InputDecoration(labelText: 'Position'),
+              ),
+
+              const SizedBox(height: 16),
+              // Tampilkan data statis untuk parameter lainnya
+              // Text(
+              //   'Position: ${initialData['position'] ?? 'Not Available'}',
+              //   style: const TextStyle(fontSize: 16),
+              // ),
+              const SizedBox(height: 8),
+              Text(
+                'Date of Birth: ${initialData['dateOfBirth'] != null ? initialData['dateOfBirth'].substring(0, 10) : 'Not Available'}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Date Joined: ${initialData['dateJoined'] != null ? initialData['dateJoined'].substring(0, 10) : 'Not Available'}',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  FirebaseFirestore.instance
+                      .collection('employees')
+                      .doc(employeeId)
+                      .update({
+                    'name': nameController.text,
+                    'address': addressController.text,
+                    'email': emailController.text,
+                    'phoneNumber': phoneNumberController.text,
+                    'position': positionController.text,
+                  }).then((_) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Employee updated successfully')),
+                    );
+                  });
+                },
+                child: const Text('Save Changes'),
+              ),
+            ],
+          ),
         ),
       ),
     );
