@@ -1,19 +1,20 @@
-import 'package:flutter/material.dart'; // Ini untuk mengimpor IconData
+import 'package:flutter/material.dart'; // Import IconData dan widget lainnya
 
 class Employee {
-  final String uid; // Tambahkan UID
+  final String uid;
   final String name;
   final String position;
   final String email;
   final String password;
-  final IconData icon;
+  final IconData icon; // Menggunakan IconData
   final String phoneNumber;
   final String address;
   final DateTime dateOfBirth;
   final DateTime dateJoined;
 
+  // Constructor untuk Employee
   Employee({
-    required this.uid, // UID wajib
+    required this.uid,
     required this.name,
     required this.position,
     required this.email,
@@ -25,8 +26,9 @@ class Employee {
     required this.dateJoined,
   });
 
-  // Factory method untuk konversi dari Firebase DocumentSnapshot
+  // Factory method untuk konversi data Firebase menjadi objek Employee
   factory Employee.fromFirestore(Map<String, dynamic> data, String uid) {
+    // Mengonversi icon ke IconData dari data yang diterima
     return Employee(
       uid: uid,
       name: data['name'],
@@ -37,8 +39,8 @@ class Employee {
           IconData(data['icon'], fontFamily: 'MaterialIcons'), // Konversi icon
       phoneNumber: data['phoneNumber'],
       address: data['address'],
-      dateOfBirth: DateTime.parse(data['dateOfBirth']), // Konversi dari string
-      dateJoined: DateTime.parse(data['dateJoined']), // Konversi dari string
+      dateOfBirth: DateTime.parse(data['dateOfBirth']),
+      dateJoined: DateTime.parse(data['dateJoined']),
     );
   }
 }
