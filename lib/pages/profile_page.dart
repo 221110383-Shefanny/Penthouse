@@ -58,7 +58,7 @@ class ProfilePage extends StatelessWidget {
               ),
             ),
             const Divider(),
-            // Additional Information Section
+
             ListTile(
               leading: const Icon(Icons.phone, color: Colors.blue),
               title: const Text("Phone"),
