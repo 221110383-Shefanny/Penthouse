@@ -28,6 +28,7 @@
   "appTitle": "Wawasan",
   "checkIn": "Check In",
   "checkOut": "Check Out",
+  "needsCleaning": "Perlu Dibersihkan",
   "generalAffair": "Urusan Umum",
   "checkInValue": "24",
   "checkOutValue": "35",

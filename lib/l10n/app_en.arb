@@ -28,6 +28,7 @@
   "appTitle": "Insight",
   "checkIn": "Check In",
   "checkOut": "Check Out",
+  "needsCleaning": "Needs Cleaning",
   "generalAffair": "General Affair",
   "checkInValue": "24",
   "checkOutValue": "35",
