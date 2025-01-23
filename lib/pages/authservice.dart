@@ -11,14 +11,13 @@ class AuthService {
         email: email,
         password: password,
       );
-      return userCredential.user; // Mengembalikan user jika login berhasil
+      return userCredential.user;
     } catch (e) {
       print("Error during login: $e");
-      return null; // Mengembalikan null jika login gagal
+      return null;
     }
   }
 
-  // Mendapatkan email dari pengguna yang sedang login
   String? getLoggedInUserEmail() {
     final User? user = _auth.currentUser;
     return user?.email;

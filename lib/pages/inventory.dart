@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/Sqllite.dart';
-// import 'Sqlitte.dart'; // Ganti dengan lokasi file yang benar
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import the localization package
 
 class Inventory extends StatefulWidget {
   const Inventory({super.key});
@@ -34,18 +34,18 @@ class _InventoryState extends State<Inventory> {
         int itemQuantity = 1;
 
         return AlertDialog(
-          title: const Text('Tambah Barang'),
+          title: Text(AppLocalizations.of(context)!.addItem), // Localized title
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                decoration: const InputDecoration(labelText: 'Nama Barang'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.itemName), // Localized label
                 onChanged: (value) {
                   itemName = value;
                 },
               ),
               TextField(
-                decoration: const InputDecoration(labelText: 'Jumlah'),
+                decoration: InputDecoration(labelText: AppLocalizations.of(context)!.itemQuantity), // Localized label
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
                   itemQuantity = int.tryParse(value) ?? 1;
@@ -66,13 +66,13 @@ class _InventoryState extends State<Inventory> {
                   });
                 }
               },
-              child: const Text('Simpan'),
+              child: Text(AppLocalizations.of(context)!.save), // Localized button
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Batal'),
+              child: Text(AppLocalizations.of(context)!.cancel), // Localized button
             ),
           ],
         );
@@ -84,12 +84,12 @@ class _InventoryState extends State<Inventory> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Inventory"),
+        title: Text(AppLocalizations.of(context)!.appTitle), // Localized title
         backgroundColor: Colors.teal,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: _addItem, // Memanggil fungsi untuk menambah barang
+            onPressed: _addItem, // Calling function to add item
           ),
         ],
       ),
@@ -98,23 +98,22 @@ class _InventoryState extends State<Inventory> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Daftar Barang",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.inventoryList, // Localized header
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
-                itemCount: inventoryItems.length, // Jumlah barang
+                itemCount: inventoryItems.length, // Number of items
                 itemBuilder: (context, index) {
                   final item = inventoryItems[index];
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     child: ListTile(
                       leading: const Icon(Icons.inventory, color: Colors.teal),
-                      title: Text(item['name']!), // Nama barang
-                      subtitle:
-                          Text('Jumlah: ${item['quantity']}'), // Jumlah barang
+                      title: Text(item['name']!), // Item name
+                      subtitle: Text('Quantity: ${item['quantity']}'), // Item quantity
                     ),
                   );
                 },

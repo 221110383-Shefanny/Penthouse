@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/Check_in.dart';
 import 'package:flutter_application_9/pages/Check_out.dart';
 import 'package:flutter_application_9/pages/general_affairhistory.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import the localization package
 
 class InsightPage extends StatelessWidget {
   const InsightPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Insight'),
+        title: Text(localizations.appTitle), // Localized app title
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 4,
@@ -20,8 +23,8 @@ class InsightPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _buildInsightCard(
-              title: "Check In",
-              value: "24",
+              title: localizations.checkIn, // Localized title
+              value: localizations.checkInValue, // Localized value
               icon: Icons.login,
               color: Colors.green,
               onPressed: () {
@@ -30,8 +33,8 @@ class InsightPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             _buildInsightCard(
-              title: "Check Out",
-              value: "35",
+              title: localizations.checkOut, // Localized title
+              value: localizations.checkOutValue, // Localized value
               icon: Icons.logout,
               color: Colors.redAccent,
               onPressed: () {
@@ -40,8 +43,8 @@ class InsightPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             _buildInsightCard(
-              title: "General Affair",
-              value: "10",
+              title: localizations.generalAffair, // Localized title
+              value: localizations.generalAffairValue, // Localized value
               icon: Icons.cleaning_services,
               color: Colors.blueAccent,
               onPressed: () {
