@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter_application_9/employee_list.dart';
 import 'package:flutter_application_9/pages/supervisor/supervisor_home.dart';
+import 'package:flutter_localization/flutter_localization.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -48,7 +49,7 @@ class _LoginState extends State<Login> {
     try {
       var employee = await fetchEmployeeData(_emailController.text.trim());
       if (employee == null) {
-        throw Exception('Akun tidak ditemukan');
+        throw Exception('');
       }
 
       if (_passwordController.text.trim() != employee.password) {

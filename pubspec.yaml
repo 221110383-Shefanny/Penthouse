@@ -36,9 +36,11 @@ dependencies:
   firebase_database: ^11.1.6
   flutter:
     sdk: flutter
+  flutter_localization: ^0.3.1
   image_picker: ^1.1.2
   intercom_flutter: ^9.2.3
-  intl: ^0.18.1
+  intl: any
+  localization: ^2.1.1
   path: ^1.9.0
   shared_preferences: ^2.3.3
   sqflite: ^2.0.0+4
@@ -53,7 +55,7 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
 flutter:
-
+  generate: true
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
