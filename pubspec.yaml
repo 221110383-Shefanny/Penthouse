@@ -43,6 +43,7 @@ dependencies:
   localization: ^2.1.1
   path: ^1.9.0
   shared_preferences: ^2.3.3
+  permission_handler: 11.3.1
   sqflite: ^2.0.0+4
   test: ^1.25.8
 
