@@ -55,6 +55,13 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 # The following section is specific to Flutter packages.
+
+flutter_intl:
+  enabled: true
+  arb_dir: lib/l10n
+  template_arbs: intl_en.arb
+  output_dir: lib/l10n
+
 flutter:
   generate: true
   # The following line ensures that the Material Icons font is
@@ -64,6 +71,8 @@ flutter:
 
   assets:
     - assets/penthouse.png
+    - assets/l10n/
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

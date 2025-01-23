@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/regist_employee.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import localization package
 
 class Employee extends StatefulWidget {
   const Employee({super.key});
@@ -12,9 +13,11 @@ class Employee extends StatefulWidget {
 class _EmployeeState extends State<Employee> {
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Employee List'),
+        title: Text(localizations.employeeList), // Localized title
         actions: [
           IconButton(
             onPressed: () {
@@ -36,7 +39,7 @@ class _EmployeeState extends State<Employee> {
             return const Center(child: CircularProgressIndicator());
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No employees found.'));
+            return Center(child: Text(localizations.noEmployees)); // Localized text
           }
 
           final employees = snapshot.data!.docs;
@@ -45,8 +48,7 @@ class _EmployeeState extends State<Employee> {
             itemCount: employees.length,
             itemBuilder: (context, index) {
               final employeeData = employees[index];
-              final docId =
-                  employeeData.id; // ID dokumen untuk operasi Edit/Remove
+              final docId = employeeData.id;
 
               return ListTile(
                 leading: const Icon(
@@ -54,22 +56,20 @@ class _EmployeeState extends State<Employee> {
                   size: 40,
                   color: Colors.blue,
                 ),
-                title: Text(employeeData['name'] ?? 'No Name'),
-                subtitle: Text(employeeData['position'] ?? 'No Position'),
+                title: Text(employeeData['name'] ?? localizations.noName), // Localized text
+                subtitle: Text(employeeData['position'] ?? localizations.noPosition), // Localized text
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () {
-                        // Navigasi ke halaman edit (buat halaman edit)
                         Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => EditEmployee(
                               employeeId: docId,
-                              initialData:
-                                  employeeData.data() as Map<String, dynamic>,
+                              initialData: employeeData.data() as Map<String, dynamic>,
                             ),
                           ),
                         );
@@ -78,17 +78,15 @@ class _EmployeeState extends State<Employee> {
                     IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () {
-                        // Konfirmasi penghapusan
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            title: const Text('Delete Employee'),
-                            content: const Text(
-                                'Are you sure you want to delete this employee?'),
+                            title: Text(localizations.deleteEmployee), // Localized title
+                            content: Text(localizations.confirmDelete), // Localized text
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
-                                child: const Text('Cancel'),
+                                child: Text(localizations.cancel), // Localized text
                               ),
                               TextButton(
                                 onPressed: () {
@@ -99,13 +97,12 @@ class _EmployeeState extends State<Employee> {
                                       .then((_) {
                                     Navigator.pop(context);
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                          content: Text(
-                                              'Employee deleted successfully')),
+                                      SnackBar(
+                                          content: Text(localizations.employeeDeleted)), // Localized text
                                     );
                                   });
                                 },
-                                child: const Text('Delete'),
+                                child: Text(localizations.delete), // Localized text
                               ),
                             ],
                           ),
@@ -135,18 +132,17 @@ class EditEmployee extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    
     final nameController = TextEditingController(text: initialData['name']);
-    final addressController =
-        TextEditingController(text: initialData['address']);
+    final addressController = TextEditingController(text: initialData['address']);
     final emailController = TextEditingController(text: initialData['email']);
-    final phoneNumberController =
-        TextEditingController(text: initialData['phoneNumber']);
-    final positionController =
-        TextEditingController(text: initialData['position']);
+    final phoneNumberController = TextEditingController(text: initialData['phoneNumber']);
+    final positionController = TextEditingController(text: initialData['position']);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Employee'),
+        title: Text(localizations.editEmployee), // Localized title
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -156,42 +152,34 @@ class EditEmployee extends StatelessWidget {
             children: [
               TextField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(labelText: localizations.name), 
               ),
               TextField(
                 controller: addressController,
-                decoration: const InputDecoration(labelText: 'Address'),
+                decoration: InputDecoration(labelText: localizations.address), 
               ),
               TextField(
                 controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration: InputDecoration(labelText: localizations.email), 
                 keyboardType: TextInputType.emailAddress,
               ),
               TextField(
                 controller: phoneNumberController,
-                decoration: const InputDecoration(labelText: 'Phone Number'),
+                decoration: InputDecoration(labelText: localizations.phoneNumber), 
                 keyboardType: TextInputType.phone,
               ),
-
               TextField(
                 controller: positionController,
-                decoration: const InputDecoration(labelText: 'Position'),
+                decoration: InputDecoration(labelText: localizations.position), 
               ),
-
               const SizedBox(height: 16),
-              // Tampilkan data statis untuk parameter lainnya
-              // Text(
-              //   'Position: ${initialData['position'] ?? 'Not Available'}',
-              //   style: const TextStyle(fontSize: 16),
-              // ),
-              const SizedBox(height: 8),
               Text(
-                'Date of Birth: ${initialData['dateOfBirth'] != null ? initialData['dateOfBirth'].substring(0, 10) : 'Not Available'}',
+                '${localizations.dateOfBirth}: ${initialData['dateOfBirth'] != null ? initialData['dateOfBirth'].substring(0, 10) : localizations.notAvailable}', // Localized text
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 8),
               Text(
-                'Date Joined: ${initialData['dateJoined'] != null ? initialData['dateJoined'].substring(0, 10) : 'Not Available'}',
+                '${localizations.dateJoined}: ${initialData['dateJoined'] != null ? initialData['dateJoined'].substring(0, 10) : localizations.notAvailable}', // Localized text
                 style: const TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 16),
@@ -209,12 +197,11 @@ class EditEmployee extends StatelessWidget {
                   }).then((_) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Employee updated successfully')),
+                      SnackBar(content: Text(localizations.employeeUpdated)), // Localized text
                     );
                   });
                 },
-                child: const Text('Save Changes'),
+                child: Text(localizations.saveChanges), // Localized text
               ),
             ],
           ),

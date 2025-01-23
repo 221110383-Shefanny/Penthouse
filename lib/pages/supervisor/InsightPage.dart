@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_9/pages/Check_in.dart';
 import 'package:flutter_application_9/pages/Check_out.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import localization package
 
 class InsightPage extends StatelessWidget {
   const InsightPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Insight'),
+        title: Text(localizations.insight), // Localized app bar title
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 4,
@@ -19,7 +22,7 @@ class InsightPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             _buildInsightCard(
-              title: "Check In",
+              title: localizations.checkIn, // Localized title
               value: "24",
               icon: Icons.login,
               color: Colors.green,
@@ -29,7 +32,7 @@ class InsightPage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             _buildInsightCard(
-              title: "Check Out",
+              title: localizations.checkOut, // Localized title
               value: "35",
               icon: Icons.logout,
               color: Colors.redAccent,

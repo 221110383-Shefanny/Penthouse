@@ -6,6 +6,7 @@ import 'package:flutter_application_9/pages/insight.dart';
 import 'package:flutter_application_9/pages/inventory.dart';
 import 'package:flutter_application_9/pages/room.dart';
 import 'package:flutter_application_9/pages/supervisor/employee.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import localization package
 
 class HomePage extends StatefulWidget {
   final String userName;
@@ -15,8 +16,8 @@ class HomePage extends StatefulWidget {
   final String userUid;
   final String phoneNumber;
   final String address;
-  final String dateOfBirth; // Assuming this is a string date
-  final String dateJoined; // Assuming this is a string date
+  final String dateOfBirth;
+  final String dateJoined; 
 
   const HomePage({
     Key? key,
@@ -54,37 +55,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // Function to format the date
-  String formatDate(String date) {
-    try {
-      // Try parsing the date with DateTime.parse() (ISO format)
-      DateTime dateTime = DateTime.parse(date);
-      final DateFormat formatter = DateFormat('dd MMMM yyyy'); // Desired format
-      return formatter.format(dateTime); // Returning formatted date
-    } catch (e) {
-      // If it's not in ISO format, handle other formats using DateFormat
-      try {
-        // Use custom format (change this pattern if needed)
-        final DateFormat customFormat =
-            DateFormat('yyyy-MM-dd'); // Example pattern
-        DateTime dateTime =
-            customFormat.parse(date); // Parse custom formatted date
-        final DateFormat formatter =
-            DateFormat('dd MMMM yyyy'); // Desired format
-        return formatter.format(dateTime); // Returning formatted date
-      } catch (e) {
-        // Handle the error gracefully if the date format is not correct
-        print("Error parsing date: $e");
-        return "Invalid Date"; // Default error string
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Penthouse"),
+        title: Text(localizations.appTitle), // Localized app title
       ),
       body: Container(
         color: Colors.grey[100],
@@ -94,7 +71,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             Center(child: Image.asset('assets/penthouse.png', height: 200)),
             Text(
-              "Welcome back, ${widget.userName}",
+              localizations.welcomeMessage(widget.userName),
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -102,7 +79,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             Text(
-              "You Logged In as ${widget.userRole}",
+              localizations.userRoleMessage(widget.userRole),
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 25),
@@ -115,29 +92,29 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   _buildCard(
                     icon: Icons.map,
-                    title: "Room",
+                    title: localizations.room, // Localized title
                     color: Colors.blue[100],
                     page: const RoomLayout(),
                   ),
                   _buildCard(
                     icon: Icons.business_center,
-                    title: "General Affair",
+                    title: localizations.generalAffair, // Localized title
                     color: Colors.green[100],
                     page: const GeneralAffair(),
                   ),
                   _buildCard(
                     icon: Icons.inventory,
-                    title: "Inventory",
+                    title: localizations.inventory, // Localized title
                     color: Colors.orange[100],
                     page: const Inventory(),
                   ),
                   _buildCard(
                     icon: Icons.insights,
-                    title: "Insight",
+                    title: localizations.insight, // Localized title
                     color: Colors.purple[100],
                     page: const InsightPage(),
                   ),
-                  _buildEmployeeCard(),
+                  _buildEmployeeCard(localizations),
                 ],
               ),
             ),
@@ -145,18 +122,18 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: const Icon(Icons.home),
+            label: localizations.appTitle, // Localized title for "Home"
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: 'Message',
+            icon: const Icon(Icons.message),
+            label: localizations.message, // Localized message label
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: const Icon(Icons.person),
+            label: localizations.profile, // Localized profile label
           ),
         ],
         currentIndex: 0,
@@ -223,7 +200,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildEmployeeCard() {
+  Widget _buildEmployeeCard(AppLocalizations localizations) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -244,9 +221,9 @@ class _HomePageState extends State<HomePage> {
           children: [
             const Icon(Icons.people, size: 50),
             const SizedBox(height: 10),
-            const Text(
-              "Employee",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+            Text(
+              localizations.employee, // Localized title
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
             ),
           ],
         ),
