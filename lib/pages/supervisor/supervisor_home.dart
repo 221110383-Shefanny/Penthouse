@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Import intl for date formatting
-import 'package:flutter_application_9/pages/profile_page.dart'; // Import ProfilePage
+import 'package:flutter_application_9/main.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter_application_9/pages/profile_page.dart';
 import 'package:flutter_application_9/pages/general_affair.dart';
 import 'package:flutter_application_9/pages/insight.dart';
 import 'package:flutter_application_9/pages/inventory.dart';
 import 'package:flutter_application_9/pages/room.dart';
 import 'package:flutter_application_9/pages/supervisor/employee.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Import localization package
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   final String userName;
@@ -17,7 +20,7 @@ class HomePage extends StatefulWidget {
   final String phoneNumber;
   final String address;
   final String dateOfBirth;
-  final String dateJoined; 
+  final String dateJoined;
 
   const HomePage({
     Key? key,
@@ -55,13 +58,76 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late BannerAd _bannerAd;
+
+  bool _isBannerAdReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBannerAd();
+  }
+
+  void _loadBannerAd() {
+    _bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-3940256099942544/9214589741',
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          setState(() {
+            _isBannerAdReady = true;
+          });
+        },
+        onAdFailedToLoad: (ad, error) {
+          _isBannerAdReady = false;
+          ad.dispose();
+          print('BannerAd failed to load: $error');
+        },
+      ),
+      request: AdRequest(),
+    );
+    _bannerAd.load();
+  }
+
+  @override
+  void dispose() {
+    _bannerAd.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations.appTitle), // Localized app title
+        title: Text(localizations.appTitle),
+        actions: [
+          DropdownButton<Locale>(
+            value: Localizations.localeOf(context),
+            icon: const Icon(Icons.language, color: Colors.black),
+            dropdownColor: Colors.blue,
+            underline: Container(),
+            items: [
+              DropdownMenuItem(
+                value: const Locale('en'),
+                child: Text('English',
+                    style: const TextStyle(color: Colors.black)),
+              ),
+              DropdownMenuItem(
+                value: const Locale('id'),
+                child: Text('Bahasa Indonesia',
+                    style: const TextStyle(color: Colors.black)),
+              ),
+            ],
+            onChanged: (Locale? newLocale) {
+              if (newLocale != null) {
+                Provider.of<LanguageProvider>(context, listen: false)
+                    .setLocale(newLocale);
+              }
+            },
+          ),
+        ],
       ),
       body: Container(
         color: Colors.grey[100],
@@ -84,40 +150,59 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 25),
             const SizedBox(height: 25),
+
+            // Wrap GridView in a SingleChildScrollView to avoid overflow
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: [
-                  _buildCard(
-                    icon: Icons.map,
-                    title: localizations.room, // Localized title
-                    color: Colors.blue[100],
-                    page: const RoomLayout(),
-                  ),
-                  _buildCard(
-                    icon: Icons.business_center,
-                    title: localizations.generalAffair, // Localized title
-                    color: Colors.green[100],
-                    page: const GeneralAffair(),
-                  ),
-                  _buildCard(
-                    icon: Icons.inventory,
-                    title: localizations.inventory, // Localized title
-                    color: Colors.orange[100],
-                    page: const Inventory(),
-                  ),
-                  _buildCard(
-                    icon: Icons.insights,
-                    title: localizations.insight, // Localized title
-                    color: Colors.purple[100],
-                    page: const InsightPage(),
-                  ),
-                  _buildEmployeeCard(localizations),
-                ],
+              child: SingleChildScrollView(
+                child: GridView.count(
+                  physics:
+                      NeverScrollableScrollPhysics(), // Disable GridView's scrolling
+                  shrinkWrap:
+                      true, // Allow the GridView to take up only as much space as needed
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  children: [
+                    _buildCard(
+                      icon: Icons.map,
+                      title: localizations.room,
+                      color: Colors.blue[100],
+                      page: const RoomLayout(),
+                    ),
+                    _buildCard(
+                      icon: Icons.business_center,
+                      title: localizations.generalAffair,
+                      color: Colors.green[100],
+                      page: const GeneralAffair(),
+                    ),
+                    _buildCard(
+                      icon: Icons.inventory,
+                      title: localizations.inventory,
+                      color: Colors.orange[100],
+                      page: const Inventory(),
+                    ),
+                    _buildCard(
+                      icon: Icons.insights,
+                      title: localizations.insight,
+                      color: Colors.purple[100],
+                      page: const InsightPage(),
+                    ),
+                    _buildEmployeeCard(localizations),
+                  ],
+                ),
               ),
             ),
+
+            // Ad widget
+            if (_isBannerAdReady)
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: _bannerAd.size.width.toDouble(),
+                  height: _bannerAd.size.height.toDouble(),
+                  child: AdWidget(ad: _bannerAd),
+                ),
+              ),
           ],
         ),
       ),
@@ -125,15 +210,15 @@ class _HomePageState extends State<HomePage> {
         items: [
           BottomNavigationBarItem(
             icon: const Icon(Icons.home),
-            label: localizations.appTitle, // Localized title for "Home"
+            label: localizations.appTitle,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.message),
-            label: localizations.message, // Localized message label
+            label: localizations.message,
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.person),
-            label: localizations.profile, // Localized profile label
+            label: localizations.profile,
           ),
         ],
         currentIndex: 0,
@@ -142,7 +227,6 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
         onTap: (index) {
           if (index == 2) {
-            // Navigate to ProfilePage when profile icon is tapped
             Navigator.push(
               context,
               MaterialPageRoute(
